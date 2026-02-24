@@ -240,10 +240,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "pywizlight" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastapi", extras = ["standard"], specifier = ">=0.133.0" }]
+requires-dist = [
+    { name = "fastapi", extras = ["standard"], specifier = ">=0.133.0" },
+    { name = "pywizlight", specifier = ">=0.6.3" },
+]
 
 [[package]]
 name = "httpcore"
@@ -550,6 +554,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/94/01/979e98d542a70714b0cb2b6728ed0b7c46792b695e3eaec3e20711271ca3/python_multipart-0.0.22.tar.gz", hash = "sha256:7340bef99a7e0032613f56dc36027b959fd3b30a787ed62d310e951f7c3a3a58", size = 37612, upload-time = "2026-01-25T10:15:56.219Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1b/d0/397f9626e711ff749a95d96b7af99b9c566a9bb5129b8e4c10fc4d100304/python_multipart-0.0.22-py3-none-any.whl", hash = "sha256:2b2cd894c83d21bf49d702499531c7bafd057d730c201782048f7945d82de155", size = 24579, upload-time = "2026-01-25T10:15:54.811Z" },
+]
+
+[[package]]
+name = "pywizlight"
+version = "0.6.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1f/a3/d88b06f30d843bc2a1f74e5c74ba64bd4627db7137071f73935745df414b/pywizlight-0.6.3.tar.gz", hash = "sha256:75da1bbae321cd58656933e8c7fa035d0cb01926ea6ff393e5d5e832a48f9d86", size = 43821, upload-time = "2025-06-10T18:56:23.214Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ae/31/388c242e79a60d5f8952566ed7aa491831d785e817df1591fd41398acc68/pywizlight-0.6.3-py3-none-any.whl", hash = "sha256:2ca7afe11ae1ffe6c82332e79b77b0a40473a577a2dc54277e6e0ab1e6174d07", size = 59003, upload-time = "2025-06-10T18:56:21.793Z" },
 ]
 
 [[package]]

@@ -1,8 +1,2 @@
-from fastapi import FastAPI
+from home_api.main import app
 
-app = FastAPI()
-
-
-@app.get("/health")
-async def health() -> dict:
-    return {"status": "ok"}
