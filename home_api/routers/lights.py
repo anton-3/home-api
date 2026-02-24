@@ -4,10 +4,10 @@ from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field, conint
 
 from home_api.utils.wiz import (
-    LIGHTS_MAP,
     LightConfigError,
     LightInputError,
     LightResult,
+    get_lights_state,
     set_brightness,
     set_rgb,
     turn_off,
@@ -40,8 +40,18 @@ def _raise_for_result(result: LightResult) -> None:
 
 @router.get("")
 async def list_lights() -> dict:
-    """List configured lights from LIGHTS_MAP."""
-    items = [{"id": light_id } for light_id in LIGHTS_MAP.keys()]
+    """List configured lights with on/off and brightness state."""
+    try:
+        states = await get_lights_state()
+    except LightConfigError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        ) from exc
+    items = [
+        {"id": s["id"], "on": s["on"], "brightness": s["brightness"]}
+        for s in states
+    ]
     return {"items": items}
 
 

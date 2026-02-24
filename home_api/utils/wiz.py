@@ -168,3 +168,38 @@ async def set_rgb(rgb: Tuple[int, int, int], light_id: Optional[str] = None) -> 
         extra={"rgb": list(rgb)},
     )
 
+
+async def get_lights_state(light_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Return on/off and brightness for each target light. When off, brightness is 0."""
+    targets = _resolve_targets(light_id)
+
+    async def _fetch_one(lid: str, ip: str) -> Dict[str, Any]:
+        bulb = wizlight(ip)
+        try:
+            await bulb.updateState()
+            state = bulb.state
+            if state is None:
+                return {"id": lid, "on": False, "brightness": 0}
+            on_state = state.get_state()
+            try:
+                raw_brightness = state.get_brightness()
+                brightness = max(0, min(255, raw_brightness)) if raw_brightness is not None else 0
+            except (KeyError, TypeError):
+                brightness = 0
+            if not on_state:
+                brightness = 0
+            return {"id": lid, "on": on_state, "brightness": brightness}
+        except (WizLightTimeOutError, WizLightConnectionError, WizLightError, OSError, Exception):
+            return {"id": lid, "on": False, "brightness": 0}
+        finally:
+            try:
+                await bulb.async_close()
+            except Exception:
+                pass
+
+    results = await asyncio.gather(
+        *(_fetch_one(lid, ip) for lid, ip in targets.items()),
+        return_exceptions=False,
+    )
+    return list(results)
+
