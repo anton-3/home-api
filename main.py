@@ -1,6 +1,8 @@
-def main():
-    print("Hello from home-api!")
+from fastapi import FastAPI
+
+app = FastAPI()
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/health")
+async def health() -> dict:
+    return {"status": "ok"}
