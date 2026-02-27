@@ -10,3 +10,9 @@ hosting this publicly is definitely a good idea! making the code public is an ev
 - clone repo, cd into it
 - `uv sync`
 - `uv run python -m home_api`
+
+## TODO
+
+- light request timeout
+- figure out if we can get light id by request, so we can fallback to discovery if ip changes
+- garage door integration lol
