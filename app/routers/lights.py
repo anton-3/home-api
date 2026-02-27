@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field, conint
 
-from home_api.utils.wiz import (
+from app.utils.wiz import (
     LightConfigError,
     LightInputError,
     LightResult,
