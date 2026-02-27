@@ -48,10 +48,12 @@ async def list_lights() -> dict:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(exc),
         ) from exc
-    items = [
-        {"id": s["id"], "on": s["on"], "brightness": s["brightness"]}
-        for s in states
-    ]
+    items = []
+    for s in states:
+        item = {"id": s["id"], "on": s["on"], "brightness": s["brightness"]}
+        if "error" in s:
+            item["error"] = s["error"]
+        items.append(item)
     return {"items": items}
 
 

@@ -25,6 +25,9 @@ except json.JSONDecodeError:
 
 LIGHTS_MAP: dict[str, str] = _parsed_lights_map if isinstance(_parsed_lights_map, dict) else {}
 
+# Timeout in seconds for each light request (on/off, brightness, rgb, state).
+LIGHT_REQUEST_TIMEOUT = 5.0
+
 
 class LightInputError(Exception):
     """Raised when a caller supplies an invalid light identifier or value."""
@@ -88,8 +91,13 @@ async def _run_for_targets(
     async def _run_single(light_id: str, ip: str) -> None:
         bulb = wizlight(ip)
         try:
-            await op_factory(bulb)
+            await asyncio.wait_for(op_factory(bulb), timeout=LIGHT_REQUEST_TIMEOUT)
             succeeded.append(light_id)
+        except asyncio.TimeoutError:
+            failed[light_id] = {
+                "error": f"Request timed out after {LIGHT_REQUEST_TIMEOUT} seconds",
+                "type": "TimeoutError",
+            }
         except (WizLightTimeOutError, WizLightConnectionError, WizLightError, OSError) as exc:
             failed[light_id] = {"error": str(exc), "type": exc.__class__.__name__}
         except Exception as exc:  # pragma: no cover - defensive
@@ -176,7 +184,7 @@ async def get_lights_state(light_id: Optional[str] = None) -> List[Dict[str, Any
     async def _fetch_one(lid: str, ip: str) -> Dict[str, Any]:
         bulb = wizlight(ip)
         try:
-            await bulb.updateState()
+            await asyncio.wait_for(bulb.updateState(), timeout=LIGHT_REQUEST_TIMEOUT)
             state = bulb.state
             if state is None:
                 return {"id": lid, "on": False, "brightness": 0}
@@ -189,6 +197,13 @@ async def get_lights_state(light_id: Optional[str] = None) -> List[Dict[str, Any
             if not on_state:
                 brightness = 0
             return {"id": lid, "on": on_state, "brightness": brightness}
+        except asyncio.TimeoutError:
+            return {
+                "id": lid,
+                "on": False,
+                "brightness": 0,
+                "error": f"Request timed out after {LIGHT_REQUEST_TIMEOUT} seconds",
+            }
         except (WizLightTimeOutError, WizLightConnectionError, WizLightError, OSError, Exception):
             return {"id": lid, "on": False, "brightness": 0}
         finally:
