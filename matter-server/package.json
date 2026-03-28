@@ -1,0 +1,16 @@
+{
+  "name": "home-api-matter-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0 <22.0.0 || >=22.13.0"
+  },
+  "scripts": {
+    "start": "node --import ./load-parent-env.js server.js"
+  },
+  "dependencies": {
+    "@matter/main": "0.16.10",
+    "dotenv": "^16.4.7"
+  }
+}
